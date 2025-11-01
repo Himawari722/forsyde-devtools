@@ -32,6 +32,7 @@ common common-options
         co-log-core == 0.3.2.5,
         prettyprinter == 1.7.1,
         unliftio-core == 0.2.1.0,
+        process == 1.6.25.0,
 
 library
     import:           common-options
@@ -40,6 +41,8 @@ library
         CoreIR
         ForSyDeIR
         SDFSchedule
+        ProceduralIR
+        ProceduralIRToC
 
 executable forsyde-devtools-exe
     import:           common-options
@@ -63,6 +66,8 @@ executable forsyde-lsp-exe
     other-modules:
         SKGraphSchema
         ArgumentsLSP
+        ProceduralIR
+        ProceduralIRToC
 
 test-suite forsyde-devtools-test
     import:           common-options
@@ -73,6 +78,9 @@ test-suite forsyde-devtools-test
     other-modules:
         ForSyDeIRSpec
         SDFScheduleSpec
+        ForSyDeIRSpec,
+        ProceduralIRSpec,
+        ProceduralIRToCSpec
     build-depends:
         forsyde-devtools,
         hspec,
