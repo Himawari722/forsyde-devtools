@@ -47,7 +47,7 @@ executable forsyde-devtools-exe
     ghc-options:      -rtsopts -with-rtsopts=-N
     build-depends:    forsyde-devtools
     other-modules:
-        Arguments
+        ArgumentsMain
         CoreIR
         ForSyDeIR
         CoreToForSyDeIR
@@ -61,6 +61,7 @@ executable forsyde-lsp-exe
     build-depends:    forsyde-devtools
     other-modules:
         SKGraphSchema
+        ArgumentsLSP
 
 test-suite forsyde-devtools-test
     import:           common-options
