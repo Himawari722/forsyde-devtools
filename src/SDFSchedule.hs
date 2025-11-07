@@ -201,10 +201,17 @@ normalizeToInteger v =
 
 -- | Return the matrix as a string with edges as rows and actors as columns
 matrixEdgesRowsToString :: [Edge] -> [Actor] -> Matrix R -> String
+<<<<<<< HEAD:src/SDFSchedule.hs
 matrixEdgesRowsToString edges actors topoMatrix =
   let -- Calculate the maximum width of each column
       actorNameWidths = map (length . name) actors
       rowValueWidths = map (maximum . map (length . show)) (toLists topoMatrix)
+=======
+matrixEdgesRowsToString edges actors matrix =
+  let -- Calculate the maximum width of each column
+      actorNameWidths = map (length . name) actors
+      rowValueWidths = map (maximum . map (length . show)) (toLists matrix)
+>>>>>>> 5444768 (feat: add test for single core static scheduler):src/SDF_schedule.hs
       colWidths = zipWith max actorNameWidths rowValueWidths
       totalColWidths = map (+ 2) colWidths -- Add 2 to each column width for spacing
 
@@ -221,7 +228,11 @@ matrixEdgesRowsToString edges actors topoMatrix =
       separator = replicate totalWidth '-'
 
       -- Build the matrix rows
+<<<<<<< HEAD:src/SDFSchedule.hs
       matrixRows = map (rowToString edgeLabelWidth totalColWidths) (zip edges (toLists topoMatrix))
+=======
+      rows = map (rowToString edgeLabelWidth totalColWidths) (zip edges (toLists matrix))
+>>>>>>> 5444768 (feat: add test for single core static scheduler):src/SDF_schedule.hs
 
       -- Combine everything
       result =
@@ -230,7 +241,11 @@ matrixEdgesRowsToString edges actors topoMatrix =
           ++ "\n"
           ++ separator
           ++ "\n"
+<<<<<<< HEAD:src/SDFSchedule.hs
           ++ unlines matrixRows
+=======
+          ++ unlines rows
+>>>>>>> 5444768 (feat: add test for single core static scheduler):src/SDF_schedule.hs
    in result
   where
     pad width str = take width (str ++ repeat ' ')
@@ -519,6 +534,7 @@ computeScheduleAndBuffersPrint irSystem =
         then
           -- If there are no internal edges, fire all actor once, no buffer required
           let schedNames = map name actors
+<<<<<<< HEAD:src/SDFSchedule.hs
               repsWithNames = zip (map name actors) (replicate (length actors) 1)
               internalBufSizes = zip (map edgeName edges) (replicate (length edges) 0)
               ioBufSizes = computeIOBufferSizes irSystem repsWithNames
@@ -530,6 +546,13 @@ computeScheduleAndBuffersPrint irSystem =
                 ++ concatMap
                   (\(edgeNameVal, sz) -> "\n  " ++ edgeNameVal ++ ": " ++ show sz)
                   allBufSizes
+=======
+              bufSizes = replicate (length edges) 0
+           in "No internal edges found.\n\n"
+                ++ "Schedule (all actors fire once):\n"
+                ++ intercalate ", " schedNames
+                ++ "\n\nBuffer sizes: no buffer needed."
+>>>>>>> 5444768 (feat: add test for single core static scheduler):src/SDF_schedule.hs
         else
           let mat = buildTopologyMatrixEdgesRows actors edges
               matrixStr = matrixEdgesRowsToString edges actors mat
@@ -573,7 +596,10 @@ computeScheduleAndBuffersPrint irSystem =
                           ++ intercalate "\n" [label ++ "=" ++ show r | (label, r) <- zip (map name actors) repInt]
 
                       repCounts = map fromIntegral repInt :: [Int]
+<<<<<<< HEAD:src/SDFSchedule.hs
                       repsWithNames = zip (map name actors) repCounts
+=======
+>>>>>>> 5444768 (feat: add test for single core static scheduler):src/SDF_schedule.hs
                       schedIdxs = greedySchedule actors edges repCounts
                       schedNames = map (name . (actors !!)) schedIdxs
 
@@ -584,8 +610,13 @@ computeScheduleAndBuffersPrint irSystem =
                       initialTokensStr =
                         "\n\nInitial tokens (provided by IR):"
                           ++ concatMap
+<<<<<<< HEAD:src/SDFSchedule.hs
                             (\(ename, e) -> "\n " ++ ename ++ ": " ++ show (initTokens e))
                             (zip (map edgeName edges) edges)
+=======
+                            (\(lbl, e) -> "\n " ++ lbl ++ ": " ++ show (initTokens e))
+                            (zip [name (src e) ++ " → " ++ name (dst e) | e <- edges] edges)
+>>>>>>> 5444768 (feat: add test for single core static scheduler):src/SDF_schedule.hs
 
                       ok = verifySchedule actors edges (map initTokens edges) schedIdxs repCounts
                       verificationSchedStr =
@@ -593,6 +624,7 @@ computeScheduleAndBuffersPrint irSystem =
                           ++ (if ok then "OK" else "FAILED")
 
                       -- Simulate buffer usage for one period
+<<<<<<< HEAD:src/SDFSchedule.hs
                       internalBufSizes = simulateBufferUsage actors edges (map initTokens edges) schedIdxs
                       ioBufSizes = computeIOBufferSizes irSystem repsWithNames
                       allBufSizes = ioBufSizes ++ internalBufSizes
@@ -614,6 +646,14 @@ computeScheduleAndBuffersPrint irSystem =
                           ++ concatMap
                             (\(ename, sz) -> "\n  " ++ ename ++ ": " ++ show sz)
                             allBufSizes
+=======
+                      bufSizes = simulateBufferUsage actors edges (map initTokens edges) schedIdxs
+                      bufStr =
+                        "\n\nSimulated buffer sizes (maximum tokens observed per edge):"
+                          ++ concatMap
+                            (\(lbl, sz) -> "\n  " ++ lbl ++ ": " ++ show sz)
+                            (zip [name (src e) ++ " → " ++ name (dst e) | e <- edges] bufSizes)
+>>>>>>> 5444768 (feat: add test for single core static scheduler):src/SDF_schedule.hs
                    in header
                         ++ nullSpaceStr
                         ++ verificationStr
@@ -621,24 +661,41 @@ computeScheduleAndBuffersPrint irSystem =
                         ++ schedStr
                         ++ initialTokensStr
                         ++ verificationSchedStr
+<<<<<<< HEAD:src/SDFSchedule.hs
                         ++ internalBufStr
                         ++ ioBufStr
                         ++ allBufStr
+=======
+                        ++ bufStr
+>>>>>>> 5444768 (feat: add test for single core static scheduler):src/SDF_schedule.hs
                 else
                   header ++ "\n\nMatrix rank is not equal to number of actors minus one. Cannot compute repetition vector."
 
 -- Helper function to convert matrix display to string
 dispToString :: Int -> Matrix R -> String
+<<<<<<< HEAD:src/SDFSchedule.hs
 dispToString digits mat =
   let matrixRows = toLists mat
       formattedRows = map (map (formatNumber digits)) matrixRows
    in unlines (map (intercalate "  " . map (pad 10)) formattedRows)
   where
     formatNumber _ x
+=======
+dispToString n mat =
+  let rows = toLists mat
+      formattedRows = map (map (formatNumber n)) rows
+   in unlines (map (intercalate "  " . map (pad 10)) formattedRows)
+  where
+    formatNumber n x
+>>>>>>> 5444768 (feat: add test for single core static scheduler):src/SDF_schedule.hs
       | abs x < 1e-12 = "0"
       | denominator rat == 1 = show (numerator rat)
       | otherwise = show (numerator rat) ++ "/" ++ show (denominator rat)
       where
         rat = approxRational x (1e-12)
 
+<<<<<<< HEAD:src/SDFSchedule.hs
     pad width str = take width (str ++ repeat ' ')
+=======
+    pad n str = take n (str ++ repeat ' ')
+>>>>>>> 5444768 (feat: add test for single core static scheduler):src/SDF_schedule.hs

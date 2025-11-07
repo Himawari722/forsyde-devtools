@@ -46,6 +46,7 @@ library
         SDFSchedule
         ProceduralIR
         ProceduralIRToC
+        SDF_schedule
 
 executable forsyde-devtools-exe
     import:           common-options
@@ -79,6 +80,8 @@ executable forsyde-lsp-exe
         CoreIRToForSyDeIR
         Utilities
         SKGraphSchema
+        CoreToForSyDeIR
+        SDF_schedule
 
 test-suite forsyde-devtools-test
     import:           common-options
@@ -92,6 +95,8 @@ test-suite forsyde-devtools-test
         ForSyDeIRSpec,
         ProceduralIRSpec,
         ProceduralIRToCSpec
+        ForSyDeIRSpec
+        SDFScheduleSpec
     build-depends:
         forsyde-devtools,
         hspec,
