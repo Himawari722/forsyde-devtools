@@ -74,10 +74,11 @@ executable forsyde-lsp-exe
         ArgumentsLSP
         ProceduralIR
         ProceduralIRToC
+        CoreIR
         ForSyDeIR
         CoreIRToForSyDeIR
-        SKGraphSchema
         Utilities
+        SKGraphSchema
 
 test-suite forsyde-devtools-test
     import:           common-options
