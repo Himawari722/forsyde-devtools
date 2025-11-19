@@ -1,11 +1,23 @@
 module Main where
 
+<<<<<<< HEAD
 import ArgumentsMain
 import CoreIR (prettyCoreProgram)
 import CoreIRToForSyDeIR (translateCoreProgram)
 import ForSyDeIR (prettyIRJSON, prettyIRSystem)
 import Options.Applicative
 import Utilities (compileToCore)
+=======
+import Arguments
+import CoreIR (compileToCore, prettyCoreProgram)
+import CoreToForSyDeIR
+import Data.Aeson
+import qualified Data.ByteString.Lazy.Char8 as BSC
+import ForSyDeIR (prettyIRSystem)
+import ForSyDeIRToProceduralIR (translateIRSystem)
+import Options.Applicative
+import ProceduralIR
+>>>>>>> cae3957 (wip: add FirToPir module)
 
 {-
 
@@ -75,8 +87,13 @@ run (Arguments (InputFile input_file) output_file OutputForSyDeIRJSON) = do
   let ir = translateCoreProgram dflags core
   let ir_json = prettyIRJSON ir
   write_output output_file OutputForSyDeIRJSON ir_json
-run (Arguments (InputFile _) _ OutputProceduralIR) = do
-  putStrLn "To Procedural IR"
+run (Arguments (InputFile input_file) output_file OutputProceduralIR) = do
+  (core, dflags) <- compileToCore input_file
+  let ir = translateCoreProgram dflags core
+  -- TODO: DEBUG: adding fir to pir modules
+  let pir = translateIRSystem ir
+  putStrLn pir
+
 -- What we have so far, take input file and write out core
 run (Arguments (InputFile input_file) output_file OutputCore) = do
   (core, dflags) <- compileToCore input_file

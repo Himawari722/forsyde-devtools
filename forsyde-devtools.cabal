@@ -81,6 +81,7 @@ executable forsyde-lsp-exe
         Utilities
         SKGraphSchema
         CoreToForSyDeIR
+        ForSyDeIRToProceduralIR
         SDF_schedule
 
 test-suite forsyde-devtools-test
